@@ -19,7 +19,7 @@ class Request extends Kohana_Request {
 	 * @return  Request
 	 * @uses    Request::detect_uri
 	 */
-	public static function instance( & $uri = TRUE)
+	public static function factory($uri = TRUE, Cache $cache = NULL, $injected_routes = array())
 	{
 		// All supported languages
 		$langs = (array) Kohana::config('lang');
@@ -29,30 +29,9 @@ class Request extends Kohana_Request {
 			// We need the current URI
 			$uri = Request::detect_uri();
 		}
-
-		// Normalize URI
-		$uri = ltrim($uri, '/');
-
-		// Look for a supported language in the first URI segment
-		if ( ! preg_match('~^(?:'.implode('|', array_keys($langs)).')(?=/|$)~i', $uri, $matches))
-		{
-			// Find the best default language
-			$lang = Lang::find_default();
-
-			// Use the default server protocol
-			$protocol = (isset($_SERVER['SERVER_PROTOCOL'])) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
-
-			// Redirect to the same URI, but with language prepended
-			header($protocol.' 302 Found');
-			header('Location: '.URL::base(TRUE, TRUE).$lang.'/'.$uri);
-
-			// Stop execution
-			exit;
-		}
-
-		// Language found in the URI
-		Request::$lang = strtolower($matches[0]);
-
+		
+		Request::$lang = Lang::find_default();
+		
 		// Store target language in I18n
 		I18n::$lang = $langs[Request::$lang]['i18n_code'];
 
@@ -65,11 +44,8 @@ class Request extends Kohana_Request {
 			Cookie::set(Lang::$cookie, Request::$lang);
 		}
 
-		// Remove language from URI
-		$uri = (string) substr($uri, strlen(Request::$lang));
-
-		// Continue normal request processing with the URI without language
-		return parent::instance($uri);
+		// Continue normal request processing
+		return parent::factory($uri, $cache, $injected_routes);
 	}
 
 }
