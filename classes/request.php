@@ -22,7 +22,7 @@ class Request extends Kohana_Request {
 	public static function factory($uri = TRUE, Cache $cache = NULL, $injected_routes = array())
 	{
 		// All supported languages
-		$langs = (array) Kohana::config('lang');
+		$langs = (array) Kohana::$config->load('lang');
 
 		if ($uri === TRUE)
 		{
