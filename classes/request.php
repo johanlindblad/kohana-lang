@@ -19,10 +19,10 @@ class Request extends Kohana_Request {
 	 * @return  Request
 	 * @uses    Request::detect_uri
 	 */
-	public static function factory($uri = TRUE, Cache $cache = NULL, $injected_routes = array())
+	public static function factory($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array())
 	{
 		// All supported languages
-		$langs = (array) Kohana::config('lang');
+		$langs = (array) Kohana::$config->load('lang');
 
 		if ($uri === TRUE)
 		{
