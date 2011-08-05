@@ -23,7 +23,7 @@ class Kohana_Lang {
 	public static function find_default()
 	{
 		// All supported languages
-		$langs = (array) Kohana::config('lang');
+		$langs = (array) Kohana::$config->load('lang');
 
 		// Look for language cookie first
 		if ($lang = Cookie::get(Lang::$cookie))
